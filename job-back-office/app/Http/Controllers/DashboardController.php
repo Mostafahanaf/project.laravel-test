@@ -34,8 +34,21 @@ class DashboardController extends Controller
         ->limit(5)
         ->get();
 
+        //Conversion rates
+        $conversionRates = JobVacancy::withCount('jobApplications as totalCount')
+        ->having('totalCount', '>' , 0)
+        ->orderByDesc('totalCount')
+        ->limit(5)
+        ->get()
+        ->map(function ($job){
+            if($job->viewCount > 0) {
+                $job->conversionRate = round( $job->totalCount / $job->viewCount * 100, 2);
+            } else {
+                $job->conversionRate = 0;
+            }
+            return $job;
+        });
 
-
-        return view('dashboard.index' , compact(['analytics' , 'mostAppliedJobs']));
+        return view('dashboard.index' , compact(['analytics' , 'mostAppliedJobs' , 'conversionRates']));
     }
 }

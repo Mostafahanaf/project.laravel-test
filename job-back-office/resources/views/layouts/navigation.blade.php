@@ -7,44 +7,53 @@
     </div>
 
     <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             Dashboard
         </x-nav-link>
     </ul>
 
-    <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('companies.index') }}" :active="request()->routeIs('dashboard')">
+    @if (auth()->user()->role == 'admin')
+        <x-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.index')">
             Companies
         </x-nav-link>
-    </ul>
+    @endif
+
+    @if (auth()->user()->role == 'company-owner')
+        <x-nav-link :href=" route('my-company.show')" :active="request()->routeIs('my-company.show')">
+            My Company
+        </x-nav-link>
+    @endif
+
 
     <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('job-applications.index') }}" :active="request()->routeIs('dashboard')">
+        <x-nav-link :href="route('job-applications.index')" :active="request()->routeIs('job-applications.index')">
             Jop Applications
         </x-nav-link>
     </ul>
 
-    <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('job-categorise.index') }}" :active="request()->routeIs('dashboard')">
+    @if (auth()->user()->role == 'admin')
+        <x-nav-link :href="route('job-categorise.index')" :active="request()->routeIs('job-categorise.index')">
             Jop Categories
         </x-nav-link>
-    </ul>
+    @endif
 
     <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('job-vacancies.index') }}" :active="request()->routeIs('dashboard')">
+        <x-nav-link :href="route('job-vacancies.index')" :active="request()->routeIs('job-vacancies.index')">
             Jop Vacancies
         </x-nav-link>
     </ul>
 
-    <ul class="flex flex-col px-4 py-6 space-y-2">
-        <x-nav-link href="{{ route('user.index') }}" :active="request()->routeIs('dashboard')">
+    @if (auth()->user()->role == 'admin')
+        <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
             User
         </x-nav-link>
+    @endif
 
         <hr />
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <x-nav-link :herf="route('logout')" :active="false" class="text-red-500" onclick="event.preventDefault(); this.closest('form').submit();">
+            <x-nav-link :herf="route('logout')" :active="false" class="text-red-500"
+            onclick="event.preventDefault(); this.closest('form').submit();">
                 Logout
             </x-nav-link>
         </form>

@@ -16,14 +16,23 @@ class JopVancancyController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobVacancy::latest();
+         $query = JobVacancy::latest();
 
-        if($request->input('archived') == 'true'){
-            $query->onlyTrashed();
-        }
+    if (auth()->user()->role == 'company-owner') {
+        $companyIds = Company::where('ownerId', auth()->id())
+            ->pluck('id');
 
-        $jobVacancies = $query->paginate(10)->onEachSide(1);
-        return view('job-vacancy.index', compact('jobVacancies'));
+        $query->whereIn('companyId', $companyIds);
+    }
+
+    if ($request->input('archived') == 'true') {
+        $query->onlyTrashed();
+    }
+
+    $jobVacancies = $query->paginate(10)->onEachSide(1);
+
+    return view('job-vacancy.index', compact('jobVacancies'));
+
     }
 
     /**

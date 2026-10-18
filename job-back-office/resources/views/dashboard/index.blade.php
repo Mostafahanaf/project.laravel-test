@@ -68,20 +68,17 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        <tr>
-                            <td class="py-4">Full Stack</td>
-                            <td  class="py-4">4</td>
-                            <td  class="py-4">1</td>
-                            <td  class="py-4">25.0%</td>
+                            @foreach ($conversionRates as $conversionRate)
+                                <tr>
+                                    <td class="py-4">{{ $conversionRate->title}}</td>
+                                    <td  class="py-4"> {{ $conversionRate->viewCount }}</td>
+                                    <td  class="py-4">{{ $conversionRate->totalCount }}</td>
+                                    <td  class="py-4">{{ $conversionRate->conversionRate }}%</td>
+                                </tr>
+                            @endforeach
                         </tr>
-                        <tr>
-                            <td class="py-4">Full Stack</td>
-                            <td  class="py-4">4</td>
-                            <td  class="py-4">1</td>
-                            <td  class="py-4">25.0%</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    </tbody>
+                </table>
             </div>
     </div>
 </x-app-layout>

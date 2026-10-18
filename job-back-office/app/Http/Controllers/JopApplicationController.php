@@ -11,17 +11,31 @@ class JopApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $query = JobApplication::latest();
 
-        if($request->input('archived') == 'true'){
-            $query->onlyTrashed();
-        }
+public function index(Request $request)
+{
+    $query = JobApplication::latest();
 
-        $jobApplications = $query->paginate(10)->onEachSide(1);
-        return view('job-application.index', compact('jobApplications'));
+    if (auth()->user()->role == 'company-owner') {
+        $companyIds = \App\Models\Company::where(
+            'ownerId',
+            auth()->id()
+        )->pluck('id');
+
+        $query->whereHas('jobVacancy', function ($query) use ($companyIds) {
+            $query->whereIn('companyId', $companyIds);
+        });
     }
+
+    if ($request->input('archived') == 'true') {
+        $query->onlyTrashed();
+    }
+
+    $jobApplications = $query->paginate(10)->onEachSide(1);
+
+    return view('job-application.index', compact('jobApplications'));
+}
+
 
 
     /**

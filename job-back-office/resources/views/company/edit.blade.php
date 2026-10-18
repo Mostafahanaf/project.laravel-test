@@ -1,3 +1,17 @@
+@php
+    $user = auth()->user();
+
+    if ($user->role === 'admin') {
+        $formAction = route('companies.update', [
+            'company' => $company->id,
+            'redirectToList' => request('redirectToList'),
+        ]);
+    } else {
+        // company-owner (the route middleware already restricts access)
+        $formAction = route('my-company.update');
+    }
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -8,8 +22,7 @@
     <div class="overFlow-x-auto p-6">
 
         <div class=" max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md ">
-
-        <form action="{{ route('companies.update', ['company' => $company->id, 'redirectToList' => request('redirectToList')]) }}" method="POST" >
+        <form action="{{ $formAction }}" method="POST" >
             @csrf
             @method('PUT')
             <!-- Company Details -->
@@ -122,15 +135,24 @@
         </div>
 
             <div class="flex justify-end space-x-4">
+            @if (auth()->user()->role == 'company-owner')
+                <a href="{{ route('my-company.show') }}"
+                class=" py-2 px-4 rounded-md text-gray-500 hover:text-gray-700">
+                Cancel
+                </a>
+            @endif
 
-            <a href="{{ route('companies.index') }}"
-            class=" py-2 px-4 rounded-md text-gray-500 hover:text-gray-700">
-            Cancel
-            </a>
+            @if (auth()->user()->role == 'admin')
+                <a href="{{ route('companies.index') }}"
+                class=" py-2 px-4 rounded-md text-gray-500 hover:text-gray-700">
+                Cancel
+                </a>
+            @endif
                 <button type="submit"
                 class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-offset">
                     Update Company
                 </button>
+            X
             </div>
         </form>
         </div>

@@ -29,7 +29,9 @@
                 <tr class="bg-gray-50">
                     <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Applicant Name</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Position (job vacancy)</th>
+                    @if(auth()->user()->role == 'admin')
                     <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Company</th>
+                    @endif
                     <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
                     <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Actions</th>
                 </tr>
@@ -45,7 +47,9 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $jobApplication->jobVacancy?->title ?? 'N/A' }}</td>
+                        @if(auth()->user()->role == 'admin')
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $jobApplication->jobVacancy?->company?->name ?? 'N/A' }}</td>
+                        @endif
                         <td class="px-6 py-4 @if($jobApplication->status == 'accepted')  text-green-500 @elseif($jobApplication->status == 'rejected')  text-red-500 @else  text-yellow-500 @endif ">{{ $jobApplication->status }}</td>
                         <td class="px-6 py-4 text-sm">
                             <div class="flex items-center space-x-3">
