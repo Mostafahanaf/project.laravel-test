@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\JobVancancyRequest;
+use App\Http\Requests\JobVancancyUpdateRequest;
+use App\Models\JobVacancy;
+use App\Models\Company;
+use App\Models\JobCategory;
+use Illuminate\Http\Request;
+
+class JopVancancyController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $query = JobVacancy::latest();
+
+        if($request->input('archived') == 'true'){
+            $query->onlyTrashed();
+        }
+
+        $jobVacancies = $query->paginate(10)->onEachSide(1);
+        return view('job-vacancy.index', compact('jobVacancies'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $companies = Company::all();
+        $jobCategories = JobCategory::all();
+        return view('job-vacancy.create' , compact('companies', 'jobCategories'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(JobVancancyRequest $request)
+    {
+        $validated = $request->validated();
+        JobVacancy::create($validated);
+        return redirect()->route('job-vacancies.index')->with('success', 'Job vacancy created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $jobVacancy = JobVacancy::withTrashed()->findOrFail($id);
+        return view('job-vacancy.show', compact('jobVacancy'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $jobVacancy = JobVacancy::findOrFail($id);
+        $companies = Company::all();
+        $jobCategories = JobCategory::all();
+        return view('job-vacancy.edit', compact('jobVacancy', 'companies', 'jobCategories'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(JobVancancyUpdateRequest $request, string $id)
+    {
+        $jobVacancy = JobVacancy::findOrFail($id);
+        $validated = $request->validated();
+        $jobVacancy->update($validated);
+
+        if($request->query('redirectToList')=='false'){
+            return redirect()->route('job-vacancies.show' , $id)->with('success', 'Job vacancy updated successfully.');
+        }
+
+        return redirect()->route('job-vacancies.index')->with('success', 'Job vacancy updated successfully.');
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $jobVacancy = JobVacancy::findOrFail($id);
+        $jobVacancy->delete();
+        return redirect()->route('job-vacancies.index')->with('success', 'Job vacancy deleted successfully.');
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(string $id)
+    {
+        $jobVacancy = JobVacancy::withTrashed()->findOrFail($id);
+        $jobVacancy->restore();
+        return redirect()->route('job-vacancies.index', ['archived' => 'true'])->with('success', 'Job vacancy restored successfully.');
+    }
+}
+
