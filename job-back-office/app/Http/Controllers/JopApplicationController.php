@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\JobApplicationUpdateRequest;
+use App\Models\Company;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,7 @@ public function index(Request $request)
     $query = JobApplication::latest();
 
     if (auth()->user()->role == 'company-owner') {
-        $companyIds = \App\Models\Company::where(
+        $companyIds = Company::where(
             'ownerId',
             auth()->id()
         )->pluck('id');

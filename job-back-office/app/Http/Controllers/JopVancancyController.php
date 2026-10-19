@@ -16,7 +16,7 @@ class JopVancancyController extends Controller
      */
     public function index(Request $request)
     {
-         $query = JobVacancy::latest();
+        $query = JobVacancy::latest();
 
     if (auth()->user()->role == 'company-owner') {
         $companyIds = Company::where('ownerId', auth()->id())
