@@ -33,7 +33,7 @@ class JobVacancyController extends Controller
         //store in cloud
         $path = $file->storeAs('resumes', $fileName, 'public');
 
-        //$fileUrl = config('filesystem.disks.cloud.url') . '/' . $path;
+        $fileUrl = config('filesystem.disks.cloud.url') . '/' . $path;
 
         $resume = Resume::create([
             'filename' => $originalName,
