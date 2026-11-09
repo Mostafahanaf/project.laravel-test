@@ -22,7 +22,7 @@ class Resume extends Model
         'fileUrl',
         'summary',
         'contactDetails',
-        'aducation',
+        'education',
         'experience',
         'skills',
         'userId',
