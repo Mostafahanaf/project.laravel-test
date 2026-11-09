@@ -36,8 +36,8 @@ class JobVacancyController extends Controller
         $fileUrl = config('filesystem.disks.cloud.url') . '/' . $path;
 
         $resume = Resume::create([
-            'filename' => $originalName,
-            'fileUri' => $path,
+            'fileName' => $originalName,
+            'fileUrl' => $path,
             'userId' => auth()->id(),
             'contactDetails' => json_encode([
                 'email' => auth()->user()->email,
@@ -46,7 +46,7 @@ class JobVacancyController extends Controller
             'summary' => '',
             'skills' => '',
             'experience' => '',
-            'education' => ''
+            'education' => '',
         ]);
 
         JobApplication::create([
