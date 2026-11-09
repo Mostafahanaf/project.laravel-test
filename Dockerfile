@@ -10,8 +10,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY job-shared ./job-shared
 COPY job-app ./job-app
+COPY job-back-office/database/migrations ./job-back-office/database/migrations
 
 WORKDIR /app/job-app
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-CMD php artisan migrate --force && (php artisan storage:link || true) && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan migrate --force --path=/app/job-back-office/database/migrations --realpath && (php artisan storage:link || true) && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
