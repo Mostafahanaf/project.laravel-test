@@ -18,8 +18,8 @@ class Resume extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'fileName',
-        'fileUrl',
+        'filename',
+        'fileUri',
         'summary',
         'contactDetails',
         'education',
