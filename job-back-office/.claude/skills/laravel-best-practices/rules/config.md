@@ -15,7 +15,10 @@ Correct:
 ```php
 // config/services.php
 return [
-    'key' => env('API_KEY'),
+    
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+],
 ];
 
 // Application code
