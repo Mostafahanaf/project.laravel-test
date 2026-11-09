@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class ApplyJobRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class ApplyJobRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return True;
     }
 
     /**

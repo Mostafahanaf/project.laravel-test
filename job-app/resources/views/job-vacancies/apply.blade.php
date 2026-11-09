@@ -42,16 +42,16 @@
 
                 <!-- Resume Selection -->
                 <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Choose Ypur Resume</h3>
+                    <h3 class="text-xl font-semibold text-white mb-4">Choose Your Resume</h3>
 
                     <div class="mb-6">
-                        <x-input-label for="resume" value="Select form your existing resumes:" />
+                        <x-input-label for="resume" value="Select from your existing resumes:" />
                         <!-- list of Resumes -->
                     </div>
                 </div>
 
                 <!-- Upload New Resume -->
-                <div x-data="{ fileName: '', hasError: {{ $errors->has('resume_file') ? 'true' : 'false' }}0= }">
+                <div x-data="{ fileName: '', hasError: {{ $errors->has('resume_file') ? 'true' : 'false' }} }">
                     <x-input-label for="resume" value="Or upload a new resume:" />
                     <div class="flex items-center">
                         <div class="flex-1">
@@ -59,7 +59,7 @@
                                 <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 hover:border-blue-500 transition"
                                 :class="{ 'border-blue-500': fileName, 'border-red-500': hasError }">
                                     <input @change="fileName = $event.target.files[0].name" type="file"
-                                    name="ruseme_file" id="new_resume_file" class="hidden" accept=".pdf" />
+                                    name="resume_file" id="new_resume_file" class="hidden" accept=".pdf" />
                                     <div class="text-center">
                                         <template x-if="!fileName">
                                         <p class="text-gray-400"> Click to upload PDF (Max 500 KB) </p>
