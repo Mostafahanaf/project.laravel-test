@@ -6,11 +6,7 @@ use App\Models\JobVacancy;
 use App\Http\Requests\ApplyJobRequest;
 use App\Models\JobApplication;
 use App\Models\Resume;
-use Illuminate\Http\Request;
-use GeminiAPI\Client;
-use GeminiAPI\Resources\Parts\TextPart;
-use Illuminate\Support\Facades\Log;
-use Throwable;
+
 
 class JobVacancyController extends Controller
 {
@@ -21,7 +17,8 @@ class JobVacancyController extends Controller
 
     public function apply(string $id) {
         $jobVacancy = JobVacancy::findOrFail($id);
-        return view('job-vacancies.apply', compact('jobVacancy'));
+        $resumes = auth()->user()->resumes;
+        return view('job-vacancies.apply', compact('jobVacancy', 'resumes'));
     }
 
     public function processApplication(ApplyJobRequest $request, string $id) {

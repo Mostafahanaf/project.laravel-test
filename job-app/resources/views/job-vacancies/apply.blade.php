@@ -47,6 +47,15 @@
                     <div class="mb-6">
                         <x-input-label for="resume" value="Select from your existing resumes:" />
                         <!-- list of Resumes -->
+                        <div class="space-y-4">
+                            @foreach ($resumes as $resume)
+                                <!-- <div class="flex items-center gap-2">
+                                    <input type="radio" name="resume" id="resume-{{ $resume->id }}" value="{{ $resume->id }}"> -->
+                                    <label for="resume-{{ $resume->id }}" class="block text-white cursor-pointer">{{ $resume->filename }} </label>
+                                </div>
+
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
