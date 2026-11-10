@@ -6,10 +6,18 @@ use App\Models\JobVacancy;
 use App\Http\Requests\ApplyJobRequest;
 use App\Models\JobApplication;
 use App\Models\Resume;
+use App\Services\ResumeAnalysisService;
 
 
 class JobVacancyController extends Controller
 {
+
+    protected $resumeAnalysisService;
+
+    public function __construct(ResumeAnalysisService $resumeAnalysisService)
+    {
+        $this->resumeAnalysisService = $resumeAnalysisService;
+    }
     public function show(string $id) {
         $jobVacancy = JobVacancy::findOrFail($id);
         return view('job-vacancies.show', compact('jobVacancy'));
@@ -35,15 +43,10 @@ class JobVacancyController extends Controller
         //store in cloud
         $path = $file->storeAs('resumes', $fileName, 'public');
 
-        // $fileUrl = config('filesystem.disks.cloud.url') . '/' . $path;
+        $fileUrl = config('filesystem.disks.cloud.url') . '/' . $path;
 
         //TODO: Extract information from the resume using AI service
-        $extractedInfo = [
-            'summary' => '',
-            'skills' => '',
-            'experience' => '',
-            'education' => '',
-        ];
+        $extractedInfo = $this->resumeAnalysisService->extractResumeInformation($path);
 
 
         $resume = Resume::create([
