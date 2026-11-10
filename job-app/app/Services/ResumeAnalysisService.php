@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
@@ -7,72 +8,60 @@ use Spatie\PdfToText\Pdf;
 
 class ResumeAnalysisService
 {
-    public function extractResumeInformation(string $fileUrl)
+    public function extractResumeInformation(string $storagePath): array
     {
-        //extract raw text from the resume pdf file (read pdf file, and get the text)
-        $rawText = $this->extractTextFromPdf($fileUrl);
+        $rawText = $this->extractTextFromPdf($storagePath);
 
-        Log::debug('Successfully extracted raw text from the resume PDF file ' . strlen($rawText) . ' characters');
-        //use AI model to organize the text into structured format
-        //output:summary, skills, experience, education -> JSON
+        Log::debug('Extracted ' . strlen($rawText) . ' characters from the resume PDF');
 
-        //Return the JSON object
-
+        // TODO: ابعت $rawText لموديل AI يرجّعه JSON منظم
         return [
-            'summary' => '',
-            'skills' => '',
+            'summary'    => '',
+            'skills'     => '',
             'experience' => '',
-            'education' => '',
+            'education'  => '',
         ];
     }
 
-    private function extractTextFromPdf(string $fileUrl): string
+    private function extractTextFromPdf(string $storagePath): string
     {
-       $tempFile= tempnam(sys_get_temp_dir(), 'resume_');
+        $disk = Storage::disk('public'); // نفس الـ disk اللي في الـ controller
 
-       $filePath = parse_url($fileUrl, PHP_URL_PATH);
-       if(!$filePath){
-              throw new \Exception("Invalid file URL");
-       }
-
-       $filename = basename($filePath);
-
-       $storagePath = "resumes/{$filename}";
-
-       if(!storage::disk('cloud')->exists($storagePath)){
-              throw new \Exception("File not found in storage");
-       }
-
-       $pdfContent = Storage::disk('cloud')->get($storagePath);
-       if(!$pdfContent){
-              throw new \Exception("Failed to read the PDF file from storage");
-       }
-
-       file_put_contents($tempFile, $pdfContent);
-
-       //check if pdf to text is installed
-       $pdfToTextPath = ['/opt/homebrew/bin/pdftotext','/usr/bin/pdftotext','usr/local/bin/pdftotext'];
-       $pdfToTextAvailable = false;
-
-         foreach($pdfToTextPath as $path){
-                  if(file_exists($path)){
-                        $pdfToTextPath = $path;
-                        break;
-                  }
-         }
-
-         if(!$pdfToTextAvailable){
-                  throw new \Exception("pdftotext is not installed on the server");
+        if (!$disk->exists($storagePath)) {
+            throw new \Exception('File not found in storage: ' . $storagePath);
         }
 
-        //Extract text from the pdf file
-        $instance = new Pdf($tempFile);
-        $instance->setpdf($tempFile);
-        $text = $instance->text();
+        $binPath = $this->findPdfToText();
 
-        //clean up the temp file
-        unlink($tempFile);
+        $tempFile = tempnam(sys_get_temp_dir(), 'resume_');
 
-        return $text;
+        try {
+            file_put_contents($tempFile, $disk->get($storagePath));
+
+            return (new Pdf($binPath))
+                ->setPdf($tempFile)
+                ->text();
+        } finally {
+            @unlink($tempFile);
+        }
+    }
+
+    private function findPdfToText(): string
+    {
+        // ممكن تحدد المسار في .env (مهم لو بتشتغل على Windows)
+        $candidates = array_filter([
+            env('PDFTOTEXT_PATH'),
+            '/opt/homebrew/bin/pdftotext',
+            '/usr/bin/pdftotext',
+            '/usr/local/bin/pdftotext',
+        ]);
+
+        foreach ($candidates as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        throw new \Exception('pdftotext is not installed on the server');
     }
 }
